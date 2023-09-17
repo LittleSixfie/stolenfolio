@@ -1,0 +1,30 @@
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
+jobs:
+  Despliegue:
+    runs-on: ubuntu-latest
+    environment: master 
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: setting up node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: NPM install
+        run: npm install
+      - name: NPM Build
+        run: npm run build
+      - name: Uploading FTP to webserver 
+        uses: modern-dev/ftp-mirror@v2
+        env:
+          superSecretServer: ${{ secrets.DEPLOYSERVER }}
+          superSecretUser: ${{ secrets.DEPLOYUSER}}
+          superSecretPass: ${{ secrets.DEPLOYPASS }}
+        with:
+          server: ${{ secrets.DEPLOYSERVER }}
+          user: ${{ secrets.DEPLOYUSER}}
+          password: ${{ secrets.DEPLOYPASS }}
+          local_dir: ./build
+          remote_dir: /httpdocs/
